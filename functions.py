@@ -1,3 +1,10 @@
+""" Password Manager App for CPSC 329 Spring 2021
+
+functions for the app
+
+Authors: Erin Paslawski, Ryan Pang"""
+
+# for adding the hashing functions, password storage IO, etc
 import base64
 import os
 from cryptography.fernet import Fernet
@@ -51,3 +58,4 @@ def get_list(mpw):
 def get_key():
     file = open("passwords.txt","r").readlines()
     return file[0].encode('utf8', 'strict')
+

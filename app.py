@@ -1,3 +1,14 @@
+""" Password Manager App for CPSC 329 Spring 2021
+
+main for running the app and GUI interface
+
+Resources and references:
+https://youtu.be/2RocXKPPx4o
+https://youtu.be/XzE-587QupY
+https://hoffstadt.github.io/DearPyGui/index.html
+
+Authors: Erin Paslawski, Ryan Pang"""
+
 # DearPyGUI Imports
 from dearpygui.core import *
 from dearpygui.simple import *
@@ -7,6 +18,7 @@ cred_buf = []
 enc_key = b''
 tbl = None
 
+import functions
 
 width_setting = 520
 height_setting = 677
@@ -15,6 +27,7 @@ set_main_window_size(540, 720)
 set_global_font_scale(1.25)
 set_theme("Gold")
 set_style_window_padding(30, 30)
+
 
 def confirm_mpw_callback(sender, data):
     # compare inputs
@@ -30,6 +43,8 @@ def confirm_mpw_callback(sender, data):
         add_text("Passwords do not match!")
         add_button("Close", callback=close_popup("popup"))
 
+
+# Function that checks that the master password is correct
 def check_login_callback(sender, data):
     # get master password
     # compare to input
@@ -50,12 +65,11 @@ def check_login_callback(sender, data):
         add_button("Close", callback=close_popup("popup"))
 
 
-def open_main():
+def open_main(sender, data):
     if does_item_exist("Main Page"):
         show_item("Main Page")
     else:
-        add_window("Main Page")
-        
+        add_window("Main Page")        
     # close others to be safe
     if does_item_exist("Login"):
         window_close("Login")
@@ -79,22 +93,15 @@ def add_password_callback(sender, data):
     else:
         add_window("Add Password")
 
+
 def populate_table():
     global cred_buf, tbl
     #add_table(parent="Main Page", name="table", headers=["Username","Password","Website"])
     print(cred_buf)
     for cred in cred_buf:
         add_row("table",[cred[1],cred[2],cred[0]])
-        
-
-def view_passwords_callback(sender, data):
-    pass
-
-
-def check_strength_callback(sender, data):
-    pass
-
-
+ 
+# calls the functions. add_password function to actually put the encrypted password into a text file
 def add_password(row=[]):
     # code for adding the new password to the database, including encryption
     global cred_buf, enc_key
@@ -130,6 +137,8 @@ with window("Main Page", width=width_setting, height=height_setting, y_pos=0, x_
             no_move=True, no_background=False):
     # add buttons for doing stuff
     # add password
+        # Add the logo
+    draw_image("logo", "Logo.png", [0, 40], [420, 260])
     add_button("Add a Password", callback=add_password_callback)
     add_same_line()  # add button beside input
     # view passwords
@@ -137,26 +146,34 @@ with window("Main Page", width=width_setting, height=height_setting, y_pos=0, x_
     print("Welcome to the Password Manager.")
 
     add_table(parent="Main Page", name="table", headers=["Username","Password","Website"])
-
-    # Add the logo
-    draw_image("logo", "Logo.png", [0, 40], [420, 260])
-
+    
     # Check strength
     add_button("Check password strength", callback=check_strength_callback)
 
+# show the passwords page
+def show_passwords_window(sender, data):
+    pass
 
+
+# show the check strength page
+def check_strength_window(sender, data):
+    pass
+
+
+# Generic function that hides windows
 def window_close(sender):
-    delete_item(sender)
+    hide_item(sender)
     log_debug("window was deleted")
 
 
+# initial login window
 with window("Login", width=width_setting, height=height_setting, no_collapse=True, no_resize=True, no_close=True,
             no_move=True, no_background=False):
     print("Login to Password Manager.")
     # hide the other windows and wait for the master password
 
     set_window_pos("Login", 0, 0)
-    # add_drawing("logo", width=520, height=290)
+
     add_text("Enter your master password: ")
     add_spacing(count=5)
 
@@ -188,6 +205,8 @@ with window("Register", width=width_setting, height=height_setting, no_collapse=
         window_close("Register")
 
 
+
+# start program
 start_dearpygui()
 show_debug()
 print("Goodbye!")
