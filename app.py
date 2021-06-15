@@ -24,7 +24,6 @@ def confirm_mpw_callback(sender, data):
         #initialize passwords.txt
         functions.initPWFile(bytes(get_value("Master Password"), "utf-8"))
         window_close("Register")
-        open_main()
     else:
         print("Passwords do not match!")
         add_popup(popupparent="Re-enter Master Password", name="popup", show=True, width= 40, height=20)
