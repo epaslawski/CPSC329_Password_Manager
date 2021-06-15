@@ -1,6 +1,6 @@
 # for adding the hashing functions, password storage IO, etc
 
-def add_password(usrnam, pswrd):
+def add_password(acnt, usrnam, pswrd):
     pass
     # TODO
 
