@@ -1,3 +1,9 @@
+""" Password Manager App for CPSC 329 Spring 2021
+
+functions for the app
+
+Author: Erin Paslawski"""
+
 # for adding the hashing functions, password storage IO, etc
 
 def add_password(acnt, usrnam, pswrd):
