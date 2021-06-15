@@ -13,7 +13,7 @@ set_theme("Gold")
 set_style_window_padding(30, 30)
 
 
-def check_login_callback(sender):
+def check_login_callback(sender, data):
     # open text file
     # get master password
     # compare to input
@@ -22,9 +22,14 @@ def check_login_callback(sender):
         print("Passwords is correct.")
         window_close("Login")
         open_main
+    """else:
+        print("Wrong Password!")
+        add_popup(popupparent="Password", name="popup", show=True, width= 40, height=20)
+        add_text("Wrong Password")
+        add_button("Close", callback=close_popup("popup"))"""
 
 
-def open_main(sender):
+def open_main(sender, data):
     if does_item_exist("Main Page"):
         show_item("Main Page")
     else:
@@ -32,9 +37,11 @@ def open_main(sender):
     # close others to be safe
     if does_item_exist("Login"):
         window_close("Login")
+    if does_item_exist("Add Password"):
+        hide_item("Add Password")
 
 
-def add_password_callback(sender):
+def add_password_callback(sender, data):
     hide_item("Main Page")
     if does_item_exist("Add Password"):
         show_item("Add Password")
@@ -42,21 +49,23 @@ def add_password_callback(sender):
         add_window("Add Password")
 
 
-def view_passwords_callback(args):
+def view_passwords_callback(sender, data):
     pass
 
 
-def check_strength_callback(args):
+def check_strength_callback(sender, data):
     pass
 
 
 def add_password(sender, data):
     # code for adding the new password to the database, including encryption
     print("Adding Password")
-    functions.add_password(get_value("Username"), get_value("New Password"))
+    functions.add_password(get_value("Account"), get_value("Username"), get_value("New Password"))
     # window_close("Add Password")
     hide_item("Add Password")
+
     open_main
+    show_item("Main Page")
 
 
 with window("Add Password", width=width_setting, height=height_setting, no_collapse=True, no_resize=True, no_close=True,
@@ -68,6 +77,7 @@ with window("Add Password", width=width_setting, height=height_setting, no_colla
     add_spacing(count=5)
 
     # collect password input
+    add_input_text("Account", width=250, default_value="Website")
     add_input_text("Username", width=250, default_value="Username")
     add_input_text("New Password", width=250, default_value="New password")
     add_button("Add", callback=add_password)
@@ -83,7 +93,7 @@ with window("Main Page", width=width_setting, height=height_setting, y_pos=0, x_
 
     add_drawing("logo", width=520, height=290)
 
-    # IF THE PREVIOUS LINE OF CODE TRIGGERS AN ERROR TRY
+    # Add the logo
     draw_image("logo", "Logo.png", [0, 40], [420, 260])
 
     # add buttons for doing stuff
