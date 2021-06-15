@@ -5,8 +5,6 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 # for adding the hashing functions, password storage IO, etc
-<<<<<<< Updated upstream
-=======
 def add_password(row, enc):
     print(enc)
     f = Fernet(enc)
@@ -53,4 +51,3 @@ def get_list(mpw):
 def get_key():
     file = open("passwords.txt","r").readlines()
     return file[0].encode('utf8', 'strict')
->>>>>>> Stashed changes

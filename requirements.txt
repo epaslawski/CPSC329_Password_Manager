@@ -1,1 +1,2 @@
 dearpygui == 0.6.415
+cryptography == 3.4.7
