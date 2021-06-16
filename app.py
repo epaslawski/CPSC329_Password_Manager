@@ -18,8 +18,6 @@ cred_buf = []
 enc_key = b''
 tbl = None
 
-import functions
-
 width_setting = 520
 height_setting = 677
 
@@ -112,7 +110,11 @@ def view_passwords_callback(sender, data):
 
 
 def check_strength_callback(sender, data):
-    pass
+    hide_item("Main Page")
+    if does_item_exist("Check Password"):
+        show_item("Check Password")
+    else:
+        add_window("Check Password")
 
 
 # calls the functions. add_password function to actually put the encrypted password into a text file
@@ -126,6 +128,62 @@ def add_password(row=[]):
     # window_close("Add Password")
     hide_item("Add Password")
     show_item("Main Page")
+
+
+def check_password(sender, data):
+    print("Checking Password")
+    hide_item("Main Page")
+    hide_item("Check Password")
+    if does_item_exist("Password Strength"):
+        show_item("Password Strength")
+    else:
+        add_window("Password Strength")
+
+
+with window("Password Strength", width=width_setting, height=height_setting, no_collapse=True, no_resize=True,
+            no_close=True,
+            no_move=True, no_background=False):
+    print("Check password strength.")
+    set_window_pos("Password Strength", 0, 0)
+
+    pswrd = get_value("The Password")
+    strength = functions.check_strength(get_value("The Password"))
+    suggestion = functions.return_leet(get_value("The Password"))
+
+    add_text("Password Strength: " + strength)
+    add_spacing(count=5)
+    add_text("Suggested Password: " + suggestion)
+
+    add_spacing(count=30)
+
+    add_button("Done", callback=open_main)
+
+with window("Check Password", width=width_setting, height=height_setting, no_collapse=True, no_resize=True,
+            no_close=True,
+            no_move=True, no_background=False):
+    print("Check password strength.")
+    set_window_pos("Check Password", 0, 0)
+
+    add_text("Enter the password to check:")
+    add_spacing(count=5)
+
+    # collect password input
+    add_input_text("The Password", width=250, default_value="")
+
+    add_button("Check", callback=check_password)
+
+    """with popup("Check", name="popup"):
+        pswrd = get_value("The Password")
+        strength = functions.check_strength(pswrd)
+        suggestion = functions.return_leet(pswrd)
+
+        add_text("Password Strength: " + strength)
+        add_spacing(count=5)
+        add_text("Suggested Password: " + suggestion)
+    """
+    add_spacing(count=30)
+
+    add_button("Return", callback=open_main)
 
 
 with window("Add Password", width=width_setting, height=height_setting, no_collapse=True, no_resize=True, no_close=True,
@@ -152,7 +210,6 @@ with window("Main Page", width=width_setting, height=height_setting, y_pos=0, x_
             no_move=True, no_background=False):
     # add buttons for doing stuff
     # add password
-    draw_image("logo", "Logo.png", [0, 40], [420, 260])
 
     add_button("Add a Password", callback=add_password_callback)
     add_same_line()  # add button beside input
@@ -161,9 +218,6 @@ with window("Main Page", width=width_setting, height=height_setting, y_pos=0, x_
     print("Welcome to the Password Manager.")
 
     add_table(parent="Main Page", name="table", headers=["Username", "Password", "Website"])
-
-    # Add the logo
-    draw_image("logo", "Logo.png", [0, 40], [420, 260])
 
     # Check strength
     add_button("Check password strength", callback=check_strength_callback)
@@ -182,6 +236,9 @@ with window("Login", width=width_setting, height=height_setting, no_collapse=Tru
     # hide the other windows and wait for the master password
 
     set_window_pos("Login", 0, 0)
+
+    # image logo
+    add_drawing("logo", width=520, height=290)
 
     add_text("Enter your master password: ")
     add_spacing(count=5)
@@ -211,6 +268,8 @@ with window("Register", width=width_setting, height=height_setting, no_collapse=
     except:
         print("passwords.txt exists")
         window_close("Register")
+
+draw_image("logo", "Logo.png", [0, 40], [420, 260])
 
 # start program
 start_dearpygui()
