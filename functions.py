@@ -19,9 +19,9 @@ def cred_buffer_to_file(cred_buffer):
     global lock
     f = lock
     #Take first 2 lines from password file
-    byte_buffer = open("passwords.txt","r").read().splitlines()[:2]
+        byte_buffer = open("passwords.txt","r").read().splitlines()[:2]
     for cred in cred_buffer:
-    byte_buffer.append(f.encrypt(bytes(cred[0] + "," + cred[1] + "," + cred[2], encoding='UTF-8')).decode("UTF-8") + "\n")
+        byte_buffer.append(f.encrypt(bytes(cred[0] + "," + cred[1] + "," + cred[2], encoding='UTF-8')).decode("UTF-8") + "\n")
     with open("passwords.txt", "w") as file:
     file.writelines(byte_buffer)
 
@@ -145,9 +145,8 @@ def get_list():
 
     #open the save file
     file = open("passwords.txt","r").read().splitlines()
-    
+
     f = lock
     for cred in file[2:]:
         res.append(f.decrypt(cred.encode('utf8', 'strict')).decode('UTF-8').split(","))
     return res
-
