@@ -10,24 +10,81 @@ https://hoffstadt.github.io/DearPyGui/index.html
 Authors: Erin Paslawski, Ryan Pang, Mohit Bhatia"""
 
 # DearPyGUI Imports
+
 from dearpygui.core import *
 from dearpygui.simple import *
-import functions
+from functions import *
 
+# GLOBAL VARIABLES
 cred_buf = []
-enc_key = b''
-tbl = None
+edit_properties=[]
 
-import functions
-
-width_setting = 520
+width_setting = 600
 height_setting = 677
 
-set_main_window_size(540, 720)
+class SmartTable:
+    # This is the smart table that will fill widgets for cells based on type
+    def __init__(self, name: str, header: List[str] = None):
+        self.name = name
+        self.header = header
+        self.row = 0
+        self.column = 0
+
+        if header is not None:
+            self.add_header(self.header)
+
+    def add_header(self, header: List[str]):
+        with managed_columns(f"{self.name}_head", len(header)):
+            for item in header:
+                add_text(item)
+            
+        with managed_columns(f"{self.name}_body", len(header)):
+            pass
+
+    def add_row(self, row_content: List[Any]):
+        with managed_columns(f"{self.name}_{self.row}", len(row_content)+1, before=f"{self.name}_body"):
+            for item in row_content:
+                if type(item) is str:
+                    add_input_text(f"##{self.name}_{self.row}_{self.column}", default_value=item, width=-1,)
+                if type(item) is int:
+                    add_input_int(f"##{self.name}_{self.row}_{self.column}", default_value=item, width=-1, step=0)
+                if type(item) is float:
+                    add_input_float(f"##{self.name}_{self.row}_{self.column}", default_value=item, width=-1, step=0)
+                self.column += 1
+            add_button(f"Edit##{self.name}_{self.row}_{self.column}", width=-1, callback_data=self.row, callback=lambda sender, data:edit_button_callback(data))
+        self.column = 0
+        self.row += 1
+    def clear_table(self):
+        print(self.row)
+        if(self.row > 0):
+            for i in range(self.row):
+                if(does_item_exist(f"{self.name}_{i}")): delete_item(f"{self.name}_{i}")
+            self.row = 0
+
+
+set_main_window_size(width_setting+20, 720)
 set_global_font_scale(1.25)
 set_theme("Gold")
 set_style_window_padding(30, 30)
 
+def edit_button_callback(data):
+    print(data)
+    #look at the global credential buffer
+    global cred_buf, edit_properties
+    # retrieve the row
+    row = cred_buf[data]
+    #edit the contents
+    edit_properties = [data] + row
+    open_edit()
+
+def confirm_edit_callback(index,row):
+    add_password(index, row)
+    open_main()
+
+def confirm_add_callback(row):
+    global cred_buf
+    add_password(len(cred_buf), row)
+    open_main()
 
 def confirm_mpw_callback(sender, data):
     # compare inputs
@@ -35,7 +92,7 @@ def confirm_mpw_callback(sender, data):
     if get_value("Master Password") == get_value("Re-enter Master Password"):
         print("Passwords is correct.")
         # initialize passwords.txt
-        functions.initPWFile(bytes(get_value("Master Password"), "utf-8"))
+        init_pw_file(get_value("Master Password"))
         window_close("Register")
     else:
         print("Passwords do not match!")
@@ -49,14 +106,11 @@ def check_login_callback(sender, data):
     # get master password
     # compare to input
     print("Checking password")
-    if functions.check_mpw(get_value("Password")):
-        print("Passwords is correct.")
-        functions.get_list(get_value("Password"))
-        global enc_key, cred_buf, tbl
-        enc_key = functions.get_key()
-        cred_buf = functions.get_list(get_value("Password"))
+    if check_mpw(get_value("Password")):
+        global cred_buf
+        cred_buf = get_list()
         window_close("Login")
-        open_main
+        open_main()
 
     else:
         print("Wrong Password!")
@@ -65,11 +119,9 @@ def check_login_callback(sender, data):
         add_button("Close", callback=close_popup("popup"))
 
 
-def open_main(sender, data):
+def open_main():
     if does_item_exist("Main Page"):
         show_item("Main Page")
-    else:
-        add_window("Main Page")
         # close others to be safe
     if does_item_exist("Login"):
         window_close("Login")
@@ -79,12 +131,17 @@ def open_main(sender, data):
         hide_item("Add Password")
     populate_table()
 
-
-def open_register(sender, data):
-    if does_item_exist("Login"):
-        window_close("Login")
-    add_window("Register")
-
+def open_edit():
+    global edit_properties
+    hide_item("Main Page")
+    if does_item_exist("Edit Password"):
+        show_item("Edit Password")
+        set_value("Account##e", edit_properties[3])
+        set_value("Password##e", edit_properties[2])
+        set_value("Username##e", edit_properties[1])
+        print(edit_properties)
+    else:
+        add_window("Edit Password")
 
 def add_password_callback(sender, data):
     hide_item("Main Page")
@@ -93,13 +150,14 @@ def add_password_callback(sender, data):
     else:
         add_window("Add Password")
 
-
+#Adds the rows to the global credential buffer to the table
 def populate_table():
     global cred_buf, tbl
-    # add_table(parent="Main Page", name="table", headers=["Username","Password","Website"])
-    print(cred_buf)
+    
+    tbl.clear_table()
+
     for cred in cred_buf:
-        add_row("table", [cred[1], cred[2], cred[0]])
+        tbl.add_row([cred[0],cred[1],cred[2]])
 
 
 # show the check strength page
@@ -116,36 +174,55 @@ def check_strength_callback(sender, data):
 
 
 # calls the functions. add_password function to actually put the encrypted password into a text file
-def add_password(row=[]):
+def add_password(index, row):
     # code for adding the new password to the database, including encryption
-    global cred_buf, enc_key
-    cred_buf.append(row)
-    print("Adding Password")
-    functions.add_password(row, enc_key)
-    add_row("table", [row[1], row[2], row[0]])
-    # window_close("Add Password")
-    hide_item("Add Password")
-    show_item("Main Page")
+    global cred_buf
+    size = len(cred_buf)-1
+    if(size< index):
+        cred_buf.append(row)
+    else:
+        cred_buf[index] = row
+    print("resaving file")
+    cred_buffer_to_file(cred_buf)
+    open_main()
 
+
+with window("Edit Password", width=width_setting, height=height_setting, no_collapse=True, no_resize=True, no_close=True,
+            no_move=True, no_background=False):
+    print("Edit password.")
+    set_window_pos("Edit Password", 0, 0)
+
+    add_text("Enter the credentials to be changed:")
+    add_spacing(count=5)
+
+    # collect password input
+    add_input_text("Account##e", width=250)
+    add_input_text("Username##e", width=250)
+    add_input_text("Password##e", width=250)
+    add_button("Confirm Changes", callback=lambda sender, data: confirm_edit_callback(edit_properties[0],[get_value("Username##e"), get_value("Password##e"), get_value("Account##e")]))
+
+    add_spacing(count=30)
+
+    add_button("Cancel##e", callback=lambda x,y : open_main())
 
 with window("Add Password", width=width_setting, height=height_setting, no_collapse=True, no_resize=True, no_close=True,
             no_move=True, no_background=False):
-    print("Add a new password.")
+    print("Add password.")
     set_window_pos("Add Password", 0, 0)
 
     add_text("Enter the credentials to be added:")
     add_spacing(count=5)
 
     # collect password input
-    add_input_text("Account", width=250, default_value="")
-    add_input_text("Username", width=250, default_value="")
-    add_input_text("New Password", width=250, default_value="")
-    add_button("Add", callback=lambda x, y: add_password(
-        row=[get_value("Account"), get_value("Username"), get_value("New Password")]))
+    add_input_text("Account", width=250, hint="URL")
+    add_input_text("Username", width=250, hint="Username")
+    add_input_text("New Password", width=250, hint="Password")
+    add_button("Add", callback=lambda sender, data: confirm_add_callback([get_value("Username"), get_value("New Password"), get_value("Account")]))
 
     add_spacing(count=30)
 
-    add_button("Cancel", callback=open_main)
+    add_button("Cancel", callback=lambda x,y : open_main())
+
 
 with window("Main Page", width=width_setting, height=height_setting, y_pos=0, x_pos=0, no_collapse=True, no_resize=True,
             no_close=True,
@@ -158,16 +235,17 @@ with window("Main Page", width=width_setting, height=height_setting, y_pos=0, x_
     add_same_line()  # add button beside input
     # view passwords
     add_button("View Passwords", callback=view_passwords_callback)
-    print("Welcome to the Password Manager.")
-
-    add_table(parent="Main Page", name="table", headers=["Username", "Password", "Website"])
-
+    global tbl
+    tbl = SmartTable(name="table")
+    tbl.add_header(["Login ID:", "Passphrase:", "Website:", "Edit"])
+    tbl.add_row(["stormayy", 25, "Cabbage"])
+    tbl.add_row(["yantoseth", 19, "Pizza"])
+    tbl.add_row(["johnpaul444", 19, "Popcorn"])
     # Add the logo
     draw_image("logo", "Logo.png", [0, 40], [420, 260])
 
     # Check strength
     add_button("Check password strength", callback=check_strength_callback)
-
 
 # Generic function that hides windows
 def window_close(sender):
@@ -187,14 +265,12 @@ with window("Login", width=width_setting, height=height_setting, no_collapse=Tru
     add_spacing(count=5)
 
     # collect password input
-    add_input_text("Password", width=250, default_value="password")
+    add_input_text("Password", width=250, hint="Master Password", on_enter=True, callback=check_login_callback)
     add_same_line()  # add button beside input
     add_button("Enter", callback=check_login_callback)
 
 with window("Register", width=width_setting, height=height_setting, no_collapse=True, no_resize=True, no_close=True,
             no_move=True, no_background=False):
-    print("Register Password")
-
     # hide the other windows and wait for the master password
 
     set_window_pos("Register", 0, 0)
@@ -207,12 +283,13 @@ with window("Register", width=width_setting, height=height_setting, no_collapse=
     add_input_text("Re-enter Master Password", width=250)
     add_button("Confirm", callback=confirm_mpw_callback)
     try:
-        f = open("passwords.txt", "x")
-    except:
+        f = open("passwords.txt", "r")
         print("passwords.txt exists")
         window_close("Register")
+    except:
+        print("No password file exists")
+
 
 # start program
 start_dearpygui()
-show_debug()
 print("Goodbye!")
