@@ -2,7 +2,7 @@
 
 functions for the app
 
-Authors: Erin Paslawski, Ryan Pang"""
+Authors: Erin Paslawski, Ryan Pang, Mohit Bhatia"""
 
 # for adding the hashing functions, password storage IO, etc
 import base64
@@ -79,7 +79,7 @@ def get_list():
     global lock
     res = []
 
-    #open  the save file
+    #open the save file
     file = open("passwords.txt","r").read().splitlines()
     
     f = lock
