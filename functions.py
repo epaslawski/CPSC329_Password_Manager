@@ -43,26 +43,47 @@ def add_password(row, enc):
 
 
 def return_leet(pswrd):
+    rrtn_pswrd = ""
     if pswrd is None:
         return "Empty Password"
     else:
-        pswrd.replace('a', '@')
-        pswrd.replace('I', '1')
-        pswrd.replace('Z', '2')
-        pswrd.replace('e', '3')
-        pswrd.replace('A', '4')
-        pswrd.replace('s', '5')
-        pswrd.replace('S', '$')
-        pswrd.replace('O', '0')
-        pswrd.replace('i', '!')
-        pswrd.replace('#', 'H')
-        pswrd.replace('x', '*')
-        pswrd.replace('G', '6')
-        pswrd.replace('T', '7')
-        pswrd.replace('B', '8')
-        pswrd.replace('C', '(')
-        pswrd.replace('c', '<')
-        return pswrd
+        for element in pswrd:
+            if element == 'a':
+                rrtn_pswrd = rrtn_pswrd + '@'
+            elif element == 'I':
+                rrtn_pswrd = rrtn_pswrd + '1'
+            elif element == 'Z':
+                rrtn_pswrd = rrtn_pswrd + '2'
+            elif element == 'e':
+                rrtn_pswrd = rrtn_pswrd + '3'
+            elif element == 'A':
+                rrtn_pswrd = rrtn_pswrd + '4'
+            elif element == 's':
+                rrtn_pswrd = rrtn_pswrd + '5'
+            elif element == 'S':
+                rrtn_pswrd = rrtn_pswrd + '$'
+            elif element == 'O':
+                rrtn_pswrd = rrtn_pswrd + '0'
+            elif element == 'i':
+                rrtn_pswrd = rrtn_pswrd + '!'
+            elif element == 'H':
+                rrtn_pswrd = rrtn_pswrd + '#'
+            elif element == 'x':
+                rrtn_pswrd = rrtn_pswrd + '*'
+            elif element == 'G':
+                rrtn_pswrd = rrtn_pswrd + '6'
+            elif element == 'T':
+                rrtn_pswrd = rrtn_pswrd + '7'
+            elif element == 'B':
+                rrtn_pswrd = rrtn_pswrd + '8'
+            elif element == 'C':
+                rrtn_pswrd = rrtn_pswrd + '('
+            elif element == 'c':
+                rrtn_pswrd = rrtn_pswrd + '<'
+            else:
+                rrtn_pswrd = rrtn_pswrd + element
+        print(pswrd)
+        return rrtn_pswrd
 
 
 def writeToFile():
@@ -120,7 +141,7 @@ def check_strength(pswrd):
         pswrd_tally = pswrd_tally + 1
     if re.search(r'\W', pswrd) is not None:
         pswrd_tally = pswrd_tally + 1
-
+    print(pswrd)
     if pswrd_tally > 4:
         return "Strong"
     elif pswrd_tally > 2:
