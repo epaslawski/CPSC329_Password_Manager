@@ -7,6 +7,7 @@ Authors: Erin Paslawski, Ryan Pang, Mohit Bhatia"""
 # for adding the hashing functions, password storage IO, etc
 import base64
 import os
+import re
 import sys
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
@@ -34,9 +35,72 @@ def enc_to_file(index, row):
     with open("passwords.txt", "a") as file:
         file.write(bytephrase + "\n")
 
+
+def check_strength(pswrd):
+    if pswrd is None:
+        return "Weak"
+    pswrd_tally=0
+    if len(pswrd) > 9:
+        pswrd_tally = pswrd_tally + 1
+    if re.search(r'\d', pswrd) is not None:
+        pswrd_tally = pswrd_tally + 1
+    if re.search(r'[A-Z]', pswrd) is not None:
+        pswrd_tally = pswrd_tally + 1
+    if re.search(r'[a-z]', pswrd) is not None:
+        pswrd_tally = pswrd_tally + 1
+    if re.search(r'\W', pswrd) is not None:
+        pswrd_tally = pswrd_tally + 1
+    print(pswrd)
+    if pswrd_tally > 4:
+        return "Strong"
+    elif pswrd_tally > 2:
+        return "Medium"
+    else:
+        return "Weak"
+
+
 def return_leet(pswrd):
-    pass
-    # TODO
+    rrtn_pswrd = ""
+    if pswrd is None:
+        return "Empty Password"
+    else:
+        for element in pswrd:
+            if element == 'a':
+                rrtn_pswrd = rrtn_pswrd + '@'
+            elif element == 'I':
+                rrtn_pswrd = rrtn_pswrd + '1'
+            elif element == 'Z':
+                rrtn_pswrd = rrtn_pswrd + '2'
+            elif element == 'e':
+                rrtn_pswrd = rrtn_pswrd + '3'
+            elif element == 'A':
+                rrtn_pswrd = rrtn_pswrd + '4'
+            elif element == 's':
+                rrtn_pswrd = rrtn_pswrd + '5'
+            elif element == 'S':
+                rrtn_pswrd = rrtn_pswrd + '$'
+            elif element == 'O':
+                rrtn_pswrd = rrtn_pswrd + '0'
+            elif element == 'i':
+                rrtn_pswrd = rrtn_pswrd + '!'
+            elif element == 'H':
+                rrtn_pswrd = rrtn_pswrd + '#'
+            elif element == 'x':
+                rrtn_pswrd = rrtn_pswrd + '*'
+            elif element == 'G':
+                rrtn_pswrd = rrtn_pswrd + '6'
+            elif element == 'T':
+                rrtn_pswrd = rrtn_pswrd + '7'
+            elif element == 'B':
+                rrtn_pswrd = rrtn_pswrd + '8'
+            elif element == 'C':
+                rrtn_pswrd = rrtn_pswrd + '('
+            elif element == 'c':
+                rrtn_pswrd = rrtn_pswrd + '<'
+            else:
+                rrtn_pswrd = rrtn_pswrd + element
+        print(pswrd)
+        return rrtn_pswrd
 
 def write_to_file():
     fw = open("passwords.txt", "w")
