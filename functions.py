@@ -2,7 +2,7 @@
 
 functions for the app
 
-Authors: Erin Paslawski, Ryan Pang, Mohit Bhatia"""
+Authors: Erin Paslawski, Ryan Pang, Mohit Bhatia, Jiarong Xu"""
 
 # for adding the hashing functions, password storage IO, etc
 import base64
@@ -19,11 +19,11 @@ def cred_buffer_to_file(cred_buffer):
     global lock
     f = lock
     #Take first 2 lines from password file
-        byte_buffer = open("passwords.txt","r").read().splitlines()[:2]
+    byte_buffer = open("passwords.txt","r").read().splitlines()[:2]
     for cred in cred_buffer:
         byte_buffer.append(f.encrypt(bytes(cred[0] + "," + cred[1] + "," + cred[2], encoding='UTF-8')).decode("UTF-8") + "\n")
     with open("passwords.txt", "w") as file:
-    file.writelines(byte_buffer)
+        file.writelines(byte_buffer)
 
 # for adding the hashing functions, password storage IO, etc
 def enc_to_file(index, row):
