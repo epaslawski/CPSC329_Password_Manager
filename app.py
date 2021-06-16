@@ -7,7 +7,7 @@ https://youtu.be/2RocXKPPx4o
 https://youtu.be/XzE-587QupY
 https://hoffstadt.github.io/DearPyGui/index.html
 
-Authors: Erin Paslawski, Ryan Pang"""
+Authors: Erin Paslawski, Ryan Pang, Mohit Bhatia"""
 
 # DearPyGUI Imports
 from dearpygui.core import *
