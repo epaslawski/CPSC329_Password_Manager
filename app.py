@@ -291,7 +291,5 @@ with window("Register", width=width_setting, height=height_setting, no_collapse=
 
 
 # start program
-show_debug()
-show_logger()
 start_dearpygui()
 print("Goodbye!")
