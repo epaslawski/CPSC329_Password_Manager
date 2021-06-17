@@ -246,8 +246,7 @@ def delete_password(index):
     open_main()
 
 
-with window("Edit Password", width=width_setting, height=height_setting, no_collapse=True, no_resize=True,
-            no_close=True,
+with window("Edit Password", width=width_setting, height=height_setting, no_collapse=True, no_resize=True, no_close=True,
             no_move=True, no_background=False):
     print("Edit password.")
     set_window_pos("Edit Password", 0, 0)
@@ -277,27 +276,6 @@ with window("Edit Password", width=width_setting, height=height_setting, no_coll
     add_button("Cancel##e", callback=lambda x, y: open_main())
 
 
-with window("Edit Password", width=width_setting, height=height_setting, no_collapse=True, no_resize=True, no_close=True,
-            no_move=True, no_background=False):
-    print("Edit password.")
-    set_window_pos("Edit Password", 0, 0)
-
-    add_text("Enter the credentials to be changed:")
-    add_spacing(count=5)
-
-    # collect password input
-    add_input_text("Account##e", width=250)
-    add_input_text("Username##e", width=250)
-    add_input_text("Password##e", width=250)
-    add_button("Confirm Changes", callback=lambda sender, data: confirm_edit_callback(edit_properties[0],[get_value("Username##e"), get_value("Password##e"), get_value("Account##e")]))
-
-    add_spacing(count=30)
-
-    add_button("Cancel##e", callback=lambda x,y : open_main())
-    add_same_line()
-    add_button("Delete##e", callback=lambda sender, data: confirm_delete_callback(edit_properties[0]))
-
-
 with window("Add Password", width=width_setting, height=height_setting, no_collapse=True, no_resize=True, no_close=True,
             no_move=True, no_background=False):
     print("Add password.")
@@ -310,11 +288,6 @@ with window("Add Password", width=width_setting, height=height_setting, no_colla
     add_input_text("Account", width=250, hint="URL")
     add_input_text("Username", width=250, hint="Username")
     add_input_text("New Password", width=250, hint="Password")
-    add_button("Add", callback=lambda sender, data: confirm_add_callback([get_value("Username"), get_value("New Password"), get_value("Account")]))
-
-    add_spacing(count=30)
-
-    add_button("Cancel", callback=lambda x,y : open_main())
 
     add_button("Add", callback=lambda sender, data: confirm_add_callback(
         [get_value("Username"), get_value("New Password"), get_value("Account")]))
@@ -345,18 +318,27 @@ with window("Main Page", width=width_setting, height=height_setting, y_pos=0, x_
     global tbl
     tbl = SmartTable(name="table")
     tbl.add_header(["Login ID:", "Passphrase:", "Website:", "Edit"])
-    
+
+    add_button("Backup Password File", callback=backup_password_callback)
+
+
     # Add the logo
     draw_image("logo", "Logo.png", [0, 40], [420, 260])
-    add_spacing(count=20)
+    add_spacing(count=10)
     # Check strength
+    add_text("Check the strength of a password:")
+
     add_input_text("Check", width=250)
-    add_button("Backup Password File", callback=backup_password_callback)
+    add_same_line()
     add_button("Check password strength", callback=check_strength_callback)
 
+    add_spacing(count=10)
+
     # Backup Passwords
-    add_input_text("Strength")
+    add_label_text("Strength")
     add_input_text("Suggestion")
+
+    
 
 
 # Generic function that hides windows
