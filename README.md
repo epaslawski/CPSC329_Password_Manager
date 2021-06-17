@@ -10,7 +10,7 @@ pip install -r requirements.txt
 ```
 
 ## Contributers
-Ryan Pang
-Erin Paslawski
-Mohit Bhatia
+Ryan Pang__
+Erin Paslawski__
+Mohit Bhatia__
 Jiarong, Xu
