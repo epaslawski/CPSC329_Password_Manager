@@ -15,6 +15,7 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 lock :Fernet
 
+
 def cred_buffer_to_file(cred_buffer):
     global lock
     f = lock
@@ -28,6 +29,7 @@ def cred_buffer_to_file(cred_buffer):
     with open("passwords.txt", "w") as file:
         file.writelines(byte_buffer)
 
+
 def save_password_file(cred_buffer, dir):
     global lock
     f = lock
@@ -40,6 +42,7 @@ def save_password_file(cred_buffer, dir):
     print(byte_buffer)
     with open(dir, "w") as file:
         file.writelines(byte_buffer)
+
 
 # for adding the hashing functions, password storage IO, etc
 def enc_to_file(index, row):
