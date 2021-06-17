@@ -1,4 +1,6 @@
-# CPSC329_Password_Manager
+# CPSC329 - Spring 2021 - Group 12
+
+Password Manager Application
 
 ## Description
 A simple password manager built in Python that increase the general safety for users in regards to passwords.
@@ -18,9 +20,15 @@ A simple password manager built in Python that increase the general safety for u
 pip install -r requirements.txt
 ```
 
+## Run: app.py
+```
+python3 app.py
+```
+
 ## Contributers
 ### Group 12
 * Ryan Pang  
 * Erin Paslawski  
 * Mohit Bhatia  
 * Jiarong Xu
+
