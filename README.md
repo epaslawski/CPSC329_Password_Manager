@@ -13,6 +13,7 @@ A simple password manager built in Python that increase the general safety for u
 4. Suggest ways of changing the password to be stronger by suggesting alternatives.
 5. Change the password for each specific site.
 6. Delete the password for each specific site.
+7. Back up the password file.
 
 
 ## Dependencies
