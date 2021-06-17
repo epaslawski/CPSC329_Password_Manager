@@ -1,5 +1,7 @@
 """ Password Manager App for CPSC 329 Spring 2021
 
+Group 12
+
 main for running the app and GUI interface
 
 Resources and references:
@@ -18,8 +20,6 @@ from functions import *
 # GLOBAL VARIABLES
 cred_buf = []
 edit_properties = []
-
-chk_pswrd = ""
 
 width_setting = 600
 height_setting = 677
@@ -155,6 +155,7 @@ def check_login_callback(sender, data):
         add_button("Close", callback=close_popup("popup"))
 
 
+# Opens the main page
 def open_main():
     if does_item_exist("Main Page"):
         show_item("Main Page")
@@ -168,6 +169,7 @@ def open_main():
     populate_table()
 
 
+# Opens the edit page
 def open_edit():
     global edit_properties
     hide_item("Main Page")
@@ -181,6 +183,7 @@ def open_edit():
         add_window("Edit Password")
 
 
+# callback for opening the add password page
 def add_password_callback(sender, data):
     hide_item("Main Page")
     if does_item_exist("Add Password"):
@@ -207,16 +210,19 @@ def populate_table():
         tbl.add_row([cred[0],cred[1],cred[2]])
 
 
+# edits the check strength boxes in the main page
 def check_strength_callback(sender, data):
     set_value("Strength", check_strength(get_value("Check")))
     set_value("Suggestion", return_leet(get_value("Check")))
 
 
+# edits the check strength boxes in the add password page
 def check_strength_add_callback(sender, data):
     set_value("Password Strength", check_strength(get_value("Check Pswrd")))
     set_value("New Suggestion", return_leet(get_value("Check Pswrd")))
 
 
+# edits the check strength boxes in the edit passwords page
 def check_strength_edit_callback(sender, data):
     set_value("Password Strength Test", check_strength(get_value("Check Old Password")))
     set_value("New Password Suggestion", return_leet(get_value("Check Old Password")))
@@ -245,7 +251,7 @@ def delete_password(index):
     cred_buffer_to_file(cred_buf)
     open_main()
 
-
+# Window for adding passwords
 with window("Edit Password", width=width_setting, height=height_setting, no_collapse=True, no_resize=True, no_close=True,
             no_move=True, no_background=False):
     print("Edit password.")
@@ -264,6 +270,7 @@ with window("Edit Password", width=width_setting, height=height_setting, no_coll
                                                                                        get_value("Account##e")]))
 
     add_spacing(count=20)
+
     # Check strength
     add_input_text("Check Old Password", width=250)
     add_button("Check old strength", callback=check_strength_edit_callback)
@@ -273,9 +280,11 @@ with window("Edit Password", width=width_setting, height=height_setting, no_coll
 
     add_spacing(count=30)
 
+    # go back to main
     add_button("Cancel##e", callback=lambda x, y: open_main())
 
 
+# window for adding a password
 with window("Add Password", width=width_setting, height=height_setting, no_collapse=True, no_resize=True, no_close=True,
             no_move=True, no_background=False):
     print("Add password.")
@@ -293,6 +302,7 @@ with window("Add Password", width=width_setting, height=height_setting, no_colla
         [get_value("Username"), get_value("New Password"), get_value("Account")]))
 
     add_spacing(count=20)
+
     # Check strength
     add_input_text("Check Pswrd", width=250)
     add_button("Check strength", callback=check_strength_add_callback)
@@ -302,42 +312,33 @@ with window("Add Password", width=width_setting, height=height_setting, no_colla
 
     add_spacing(count=30)
 
+    # Go back to main
     add_button("Cancel", callback=lambda x, y: open_main())
 
 
+# Main page window
 with window("Main Page", width=width_setting, height=height_setting, y_pos=0, x_pos=0, no_collapse=True, no_resize=True,
             no_close=True,
             no_move=True, no_background=False):
     # add buttons for doing stuff
     # add password
-    draw_image("logo", "Logo.png", [0, 40], [420, 260])
-
     add_button("Add a Password", callback=add_password_callback)
    
     #Table
     global tbl
+    # draw the table
     tbl = SmartTable(name="table")
     tbl.add_header(["Login ID:", "Passphrase:", "Website:", "Edit"])
 
     add_button("Backup Password File", callback=backup_password_callback)
 
-    # Add the logo
-    draw_image("logo", "Logo.png", [0, 40], [420, 260])
-    add_spacing(count=10)
+    add_spacing(count=20)
     # Check strength
-    add_text("Check the strength of a password:")
-
     add_input_text("Check", width=250)
-    add_same_line()
     add_button("Check password strength", callback=check_strength_callback)
 
-    add_text("Strength and Suggestion:")
-
-    # Backup Passwords
-    add_label_text("Strength")
+    add_input_text("Strength")
     add_input_text("Suggestion")
-
-    
 
 
 # Generic function that hides windows
@@ -368,7 +369,9 @@ with window("Register", width=width_setting, height=height_setting, no_collapse=
     # hide the other windows and wait for the master password
 
     set_window_pos("Register", 0, 0)
-    # add_drawing("logo", width=520, height=290)
+    # draw logo
+    add_drawing("logo", width=520, height=290)
+
     add_text("Create your master password: ")
     add_spacing(count=5)
 
@@ -383,6 +386,8 @@ with window("Register", width=width_setting, height=height_setting, no_collapse=
     except:
         print("No password file exists")
 
+
+draw_image("logo", "Logo.png", [100, 40], [420, 280])
 
 # start program
 start_dearpygui()
