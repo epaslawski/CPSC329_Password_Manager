@@ -11,6 +11,8 @@ import base64
 import os
 import re
 import sys
+import random
+import string
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
@@ -25,7 +27,7 @@ def cred_buffer_to_file(cred_buffer):
     #Take first 2 lines from password file
     byte_buffer = open("passwords.txt","r").read().splitlines()[:2]
     byte_buffer = list(map(lambda x : x + "\n", byte_buffer ))
-    
+
     for cred in cred_buffer:
         byte_buffer.append(f.encrypt(bytes(cred[0] + "," + cred[1] + "," + cred[2], encoding='UTF-8')).decode("UTF-8") + "\n")
     print(byte_buffer)
@@ -39,7 +41,7 @@ def save_password_file(cred_buffer, dir):
     #Take first 2 lines from password file
     byte_buffer = open("passwords.txt","r").read().splitlines()[:2]
     byte_buffer = list(map(lambda x : x + "\n", byte_buffer ))
-    
+
     for cred in cred_buffer:
         byte_buffer.append(f.encrypt(bytes(cred[0] + "," + cred[1] + "," + cred[2], encoding='UTF-8')).decode("UTF-8") + "\n")
     print(byte_buffer)
@@ -87,6 +89,12 @@ def return_leet(pswrd):
     rrtn_pswrd = ""
     if pswrd is None:
         return "Empty Password"
+    elif pswrd.isdigit():
+        if len(pswrd) < 9:
+            rrtn_pswrd = pswrd + ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase) for _ in range(10-len(pswrd))) + '@'
+        else:
+            rrtn_pswrd = pswrd + ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase) for _ in range(3)) + '@'
+        return rrtn_pswrd
     else:
         for element in pswrd:
             if element == 'a':
@@ -126,7 +134,7 @@ def return_leet(pswrd):
         print(pswrd)
         return rrtn_pswrd
 
-      
+
 def init_pw_file(mpw):
     salt = base64.b64encode(os.urandom(16))
     kdf = PBKDF2HMAC(
