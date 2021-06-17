@@ -2,7 +2,7 @@
 
 functions for the app
 
-Authors: Erin Paslawski, Ryan Pang"""
+Authors: Erin Paslawski, Ryan Pang, Mohit Bhatia, Jiarong Xu"""
 
 # for adding the hashing functions, password storage IO, etc
 import base64
@@ -99,7 +99,6 @@ def return_leet(pswrd):
                 rrtn_pswrd = rrtn_pswrd + '<'
             else:
                 rrtn_pswrd = rrtn_pswrd + element
-        print(pswrd)
         return rrtn_pswrd
 
 def write_to_file():
@@ -143,11 +142,10 @@ def get_list():
     global lock
     res = []
 
-    #open  the save file
+    #open the save file
     file = open("passwords.txt","r").read().splitlines()
-    
+
     f = lock
     for cred in file[2:]:
         res.append(f.decrypt(cred.encode('utf8', 'strict')).decode('UTF-8').split(","))
     return res
-
