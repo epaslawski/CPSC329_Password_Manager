@@ -321,7 +321,6 @@ with window("Main Page", width=width_setting, height=height_setting, y_pos=0, x_
 
     add_button("Backup Password File", callback=backup_password_callback)
 
-
     # Add the logo
     draw_image("logo", "Logo.png", [0, 40], [420, 260])
     add_spacing(count=10)
@@ -332,7 +331,7 @@ with window("Main Page", width=width_setting, height=height_setting, y_pos=0, x_
     add_same_line()
     add_button("Check password strength", callback=check_strength_callback)
 
-    add_spacing(count=10)
+    add_text("Strength and Suggestion:")
 
     # Backup Passwords
     add_label_text("Strength")
@@ -363,6 +362,7 @@ with window("Login", width=width_setting, height=height_setting, no_collapse=Tru
     add_same_line()  # add button beside input
     add_button("Enter", callback=check_login_callback)
 
+
 with window("Register", width=width_setting, height=height_setting, no_collapse=True, no_resize=True, no_close=True,
             no_move=True, no_background=False):
     # hide the other windows and wait for the master password
@@ -386,4 +386,5 @@ with window("Register", width=width_setting, height=height_setting, no_collapse=
 
 # start program
 start_dearpygui()
+show_style_editor()
 print("Goodbye!")
