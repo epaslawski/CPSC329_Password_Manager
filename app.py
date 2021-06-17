@@ -10,7 +10,7 @@ https://hoffstadt.github.io/DearPyGui/index.html
 Authors: Erin Paslawski, Ryan Pang, Mohit Bhatia"""
 
 # DearPyGUI Imports
-
+import tkinter.filedialog
 from dearpygui.core import *
 from dearpygui.simple import *
 from functions import *
@@ -83,6 +83,9 @@ def confirm_edit_callback(index,row):
 
 def confirm_add_callback(row):
     global cred_buf
+    set_value("Account", "")
+    set_value("Username", "")
+    set_value("New Password", "")
     add_password(len(cred_buf), row)
     open_main()
 
@@ -156,6 +159,13 @@ def add_password_callback(sender, data):
     else:
         add_window("Add Password")
 
+def backup_password_callback(sender, data):
+    global cred_buf
+    root = tkinter.Tk()
+    dir = tkinter.filedialog.asksaveasfilename()
+    root.withdraw()
+    save_password_file(cred_buf, dir)
+
 #Adds the rows to the global credential buffer to the table
 def populate_table():
     global cred_buf, tbl
@@ -170,9 +180,6 @@ def populate_table():
 def check_strength_window(sender, data):
     pass
 
-
-def view_passwords_callback(sender, data):
-    pass
 
 
 def check_strength_callback(sender, data):
@@ -249,9 +256,8 @@ with window("Main Page", width=width_setting, height=height_setting, y_pos=0, x_
     draw_image("logo", "Logo.png", [0, 40], [420, 260])
 
     add_button("Add a Password", callback=add_password_callback)
-    add_same_line()  # add button beside input
-    # view passwords
-    add_button("View Passwords", callback=view_passwords_callback)
+   
+    #Table
     global tbl
     tbl = SmartTable(name="table")
     tbl.add_header(["Login ID:", "Passphrase:", "Website:", "Edit"])
@@ -261,6 +267,9 @@ with window("Main Page", width=width_setting, height=height_setting, y_pos=0, x_
 
     # Check strength
     add_button("Check password strength", callback=check_strength_callback)
+
+    # Backup Passwords
+    add_button("Backup Password File", callback=backup_password_callback)
 
 # Generic function that hides windows
 def window_close(sender):

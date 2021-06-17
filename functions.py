@@ -28,6 +28,19 @@ def cred_buffer_to_file(cred_buffer):
     with open("passwords.txt", "w") as file:
         file.writelines(byte_buffer)
 
+def save_password_file(cred_buffer, dir):
+    global lock
+    f = lock
+    #Take first 2 lines from password file
+    byte_buffer = open("passwords.txt","r").read().splitlines()[:2]
+    byte_buffer = list(map(lambda x : x + "\n", byte_buffer ))
+    
+    for cred in cred_buffer:
+        byte_buffer.append(f.encrypt(bytes(cred[0] + "," + cred[1] + "," + cred[2], encoding='UTF-8')).decode("UTF-8") + "\n")
+    print(byte_buffer)
+    with open(dir, "w") as file:
+        file.writelines(byte_buffer)
+
 # for adding the hashing functions, password storage IO, etc
 def enc_to_file(index, row):
     # retrieve the locking mechanism
