@@ -5,11 +5,12 @@ A simple password manager built in Python that increase the general safety for u
 
 
 ## Features
-1. Authenticate with a master password
+1. Authenticate with a master password.
 2. Store login credentials for the user.
 3. Show how strong the chosen password is.
 4. Suggest ways of changing the password to be stronger by suggesting alternatives.
-5. Change the password for each specific site
+5. Change the password for each specific site.
+6. Delete the password for each specific site.
 
 
 ## Dependencies
