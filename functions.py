@@ -18,15 +18,32 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 lock: Fernet
 
 
+
 def cred_buffer_to_file(cred_buffer):
     global lock
     f = lock
-    # Take first 2 lines from password file
-    byte_buffer = open("passwords.txt", "r").read().splitlines()[:2]
+    #Take first 2 lines from password file
+    byte_buffer = open("passwords.txt","r").read().splitlines()[:2]
+    byte_buffer = list(map(lambda x : x + "\n", byte_buffer ))
+    
     for cred in cred_buffer:
-        byte_buffer.append(
-            f.encrypt(bytes(cred[0] + "," + cred[1] + "," + cred[2], encoding='UTF-8')).decode("UTF-8") + "\n")
+        byte_buffer.append(f.encrypt(bytes(cred[0] + "," + cred[1] + "," + cred[2], encoding='UTF-8')).decode("UTF-8") + "\n")
+    print(byte_buffer)
     with open("passwords.txt", "w") as file:
+        file.writelines(byte_buffer)
+
+
+def save_password_file(cred_buffer, dir):
+    global lock
+    f = lock
+    #Take first 2 lines from password file
+    byte_buffer = open("passwords.txt","r").read().splitlines()[:2]
+    byte_buffer = list(map(lambda x : x + "\n", byte_buffer ))
+    
+    for cred in cred_buffer:
+        byte_buffer.append(f.encrypt(bytes(cred[0] + "," + cred[1] + "," + cred[2], encoding='UTF-8')).decode("UTF-8") + "\n")
+    print(byte_buffer)
+    with open(dir, "w") as file:
         file.writelines(byte_buffer)
 
 
@@ -106,14 +123,10 @@ def return_leet(pswrd):
                 rrtn_pswrd = rrtn_pswrd + '<'
             else:
                 rrtn_pswrd = rrtn_pswrd + element
+        print(pswrd)
         return rrtn_pswrd
 
-
-def write_to_file():
-    fw = open("passwords.txt", "w")
-    pass
-
-
+      
 def init_pw_file(mpw):
     salt = base64.b64encode(os.urandom(16))
     kdf = PBKDF2HMAC(

@@ -12,7 +12,7 @@ https://hoffstadt.github.io/DearPyGui/index.html
 Authors: Erin Paslawski, Ryan Pang, Mohit Bhatia"""
 
 # DearPyGUI Imports
-
+import tkinter.filedialog
 from dearpygui.core import *
 from dearpygui.simple import *
 from functions import *
@@ -40,15 +40,15 @@ class SmartTable:
         with managed_columns(f"{self.name}_head", len(header)):
             for item in header:
                 add_text(item)
-
+            
         with managed_columns(f"{self.name}_body", len(header)):
             pass
 
     def add_row(self, row_content: List[Any]):
-        with managed_columns(f"{self.name}_{self.row}", len(row_content) + 1, before=f"{self.name}_body"):
+        with managed_columns(f"{self.name}_{self.row}", len(row_content)+1, before=f"{self.name}_body"):
             for item in row_content:
                 if type(item) is str:
-                    add_input_text(f"##{self.name}_{self.row}_{self.column}", default_value=item, width=-1, )
+                    add_input_text(f"##{self.name}_{self.row}_{self.column}", default_value=item, width=-1)
                 if type(item) is int:
                     add_input_int(f"##{self.name}_{self.row}_{self.column}", default_value=item, width=-1, step=0)
                 if type(item) is float:
@@ -71,6 +71,33 @@ set_main_window_size(width_setting + 20, 720)
 set_global_font_scale(1.25)
 set_theme("Gold")
 set_style_window_padding(30, 30)
+
+def edit_button_callback(data):
+    print(data)
+    #look at the global credential buffer
+    global cred_buf, edit_properties
+    # retrieve the row
+    row = cred_buf[data]
+    #edit the contents
+    edit_properties = [data] + row
+    open_edit()
+
+def confirm_edit_callback(index,row):
+    add_password(index, row)
+    open_main()
+
+def confirm_add_callback(row):
+    global cred_buf
+    set_value("Account", "")
+    set_value("Username", "")
+    set_value("New Password", "")
+    add_password(len(cred_buf), row)
+    open_main()
+
+def confirm_delete_callback(index):
+    global cred_buf
+    delete_password(index)
+    open_main()
 
 
 def edit_button_callback(data):
@@ -165,14 +192,22 @@ def add_password_callback(sender, data):
         add_window("Add Password")
 
 
-# Adds the rows to the global credential buffer to the table
+def backup_password_callback(sender, data):
+    global cred_buf
+    root = tkinter.Tk()
+    dir = tkinter.filedialog.asksaveasfilename()
+    root.withdraw()
+    save_password_file(cred_buf, dir)
+
+
+#Adds the rows to the global credential buffer to the table
 def populate_table():
     global cred_buf, tbl
-
+    
     tbl.clear_table()
 
     for cred in cred_buf:
-        tbl.add_row([cred[0], cred[1], cred[2]])
+        tbl.add_row([cred[0],cred[1],cred[2]])
 
 
 # edits the check strength boxes in the main page
@@ -197,8 +232,8 @@ def check_strength_edit_callback(sender, data):
 def add_password(index, row):
     # code for adding the new password to the database, including encryption
     global cred_buf
-    size = len(cred_buf) - 1
-    if (size < index):
+    size = len(cred_buf)-1
+    if(size< index):
         cred_buf.append(row)
     else:
         cred_buf[index] = row
@@ -207,9 +242,17 @@ def add_password(index, row):
     open_main()
 
 
+# calls the functions. add_password function to actually put the encrypted password into a text file
+def delete_password(index):
+    # code for adding the new password to the database, including encryption
+    global cred_buf
+    cred_buf.pop(index)
+    print("resaving file")
+    cred_buffer_to_file(cred_buf)
+    open_main()
+
 # Window for adding passwords
-with window("Edit Password", width=width_setting, height=height_setting, no_collapse=True, no_resize=True,
-            no_close=True,
+with window("Edit Password", width=width_setting, height=height_setting, no_collapse=True, no_resize=True, no_close=True,
             no_move=True, no_background=False):
     print("Edit password.")
     set_window_pos("Edit Password", 0, 0)
@@ -240,6 +283,7 @@ with window("Edit Password", width=width_setting, height=height_setting, no_coll
     # go back to main
     add_button("Cancel##e", callback=lambda x, y: open_main())
 
+
 # window for adding a password
 with window("Add Password", width=width_setting, height=height_setting, no_collapse=True, no_resize=True, no_close=True,
             no_move=True, no_background=False):
@@ -253,6 +297,7 @@ with window("Add Password", width=width_setting, height=height_setting, no_colla
     add_input_text("Account", width=250, hint="URL")
     add_input_text("Username", width=250, hint="Username")
     add_input_text("New Password", width=250, hint="Password")
+
     add_button("Add", callback=lambda sender, data: confirm_add_callback(
         [get_value("Username"), get_value("New Password"), get_value("Account")]))
 
@@ -270,6 +315,7 @@ with window("Add Password", width=width_setting, height=height_setting, no_colla
     # Go back to main
     add_button("Cancel", callback=lambda x, y: open_main())
 
+
 # Main page window
 with window("Main Page", width=width_setting, height=height_setting, y_pos=0, x_pos=0, no_collapse=True, no_resize=True,
             no_close=True,
@@ -277,16 +323,14 @@ with window("Main Page", width=width_setting, height=height_setting, y_pos=0, x_
     # add buttons for doing stuff
     # add password
     add_button("Add a Password", callback=add_password_callback)
-    add_same_line()  # add button beside input
-
-    add_spacing(count=10)
+   
+    #Table
     global tbl
     # draw the table
     tbl = SmartTable(name="table")
     tbl.add_header(["Login ID:", "Passphrase:", "Website:", "Edit"])
-    tbl.add_row(["stormayy", 25, "Cabbage"])
-    tbl.add_row(["yantoseth", 19, "Pizza"])
-    tbl.add_row(["johnpaul444", 19, "Popcorn"])
+
+    add_button("Backup Password File", callback=backup_password_callback)
 
     add_spacing(count=20)
     # Check strength
@@ -319,6 +363,7 @@ with window("Login", width=width_setting, height=height_setting, no_collapse=Tru
     add_same_line()  # add button beside input
     add_button("Enter", callback=check_login_callback)
 
+
 with window("Register", width=width_setting, height=height_setting, no_collapse=True, no_resize=True, no_close=True,
             no_move=True, no_background=False):
     # hide the other windows and wait for the master password
@@ -341,7 +386,10 @@ with window("Register", width=width_setting, height=height_setting, no_collapse=
     except:
         print("No password file exists")
 
+
 draw_image("logo", "Logo.png", [100, 40], [420, 280])
+
 # start program
 start_dearpygui()
+show_style_editor()
 print("Goodbye!")
