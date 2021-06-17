@@ -19,7 +19,7 @@ pip install -r requirements.txt
 
 ## Contributers
 ### Group 12
-Ryan Pang__
-Erin Paslawski__
-Mohit Bhatia__
-Jiarong Xu
+* Ryan Pang  
+* Erin Paslawski  
+* Mohit Bhatia  
+* Jiarong Xu
