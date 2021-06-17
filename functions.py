@@ -1,5 +1,7 @@
 """ Password Manager App for CPSC 329 Spring 2021
 
+Group 12
+
 functions for the app
 
 Authors: Erin Paslawski, Ryan Pang, Mohit Bhatia, Jiarong Xu"""
@@ -13,33 +15,37 @@ from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
-lock :Fernet
+lock: Fernet
+
 
 def cred_buffer_to_file(cred_buffer):
     global lock
     f = lock
-    #Take first 2 lines from password file
-    byte_buffer = open("passwords.txt","r").read().splitlines()[:2]
+    # Take first 2 lines from password file
+    byte_buffer = open("passwords.txt", "r").read().splitlines()[:2]
     for cred in cred_buffer:
-        byte_buffer.append(f.encrypt(bytes(cred[0] + "," + cred[1] + "," + cred[2], encoding='UTF-8')).decode("UTF-8") + "\n")
+        byte_buffer.append(
+            f.encrypt(bytes(cred[0] + "," + cred[1] + "," + cred[2], encoding='UTF-8')).decode("UTF-8") + "\n")
     with open("passwords.txt", "w") as file:
         file.writelines(byte_buffer)
+
 
 # for adding the hashing functions, password storage IO, etc
 def enc_to_file(index, row):
     # retrieve the locking mechanism
     global lock
     f = lock
-    #append line
+    # append line
     bytephrase = f.encrypt(bytes(row[0] + "," + row[1] + "," + row[2], encoding='UTF-8')).decode("UTF-8")
     with open("passwords.txt", "a") as file:
         file.write(bytephrase + "\n")
 
 
+# Easy password strength test
 def check_strength(pswrd):
     if pswrd is None:
         return "Weak"
-    pswrd_tally=0
+    pswrd_tally = 0
     if len(pswrd) > 9:
         pswrd_tally = pswrd_tally + 1
     if re.search(r'\d', pswrd) is not None:
@@ -59,6 +65,7 @@ def check_strength(pswrd):
         return "Weak"
 
 
+# returns some letters as special chars to generate a stronger password
 def return_leet(pswrd):
     rrtn_pswrd = ""
     if pswrd is None:
@@ -101,10 +108,11 @@ def return_leet(pswrd):
                 rrtn_pswrd = rrtn_pswrd + element
         return rrtn_pswrd
 
+
 def write_to_file():
     fw = open("passwords.txt", "w")
     pass
-    # TODO
+
 
 def init_pw_file(mpw):
     salt = base64.b64encode(os.urandom(16))
@@ -121,8 +129,9 @@ def init_pw_file(mpw):
         file.write(salt.decode("UTF-8") + "\n")
         file.write(token.decode("UTF-8") + "\n")
 
+
 def check_mpw(mpw):
-    file = open("passwords.txt","r").read().splitlines()
+    file = open("passwords.txt", "r").read().splitlines()
     salt = file[0].encode(encoding='UTF-8')
     token = file[1].encode(encoding='UTF-8')
     kdf = PBKDF2HMAC(
@@ -134,16 +143,17 @@ def check_mpw(mpw):
     global lock
     key = base64.urlsafe_b64encode(kdf.derive(bytes(mpw, 'UTF-8')))
     f = Fernet(key)
-    lock = f # store the locking mechanism
+    lock = f  # store the locking mechanism
     return f.decrypt(token) == b'Open Sesame!'
+
 
 def get_list():
     # retrieve the locking mechanism
     global lock
     res = []
 
-    #open the save file
-    file = open("passwords.txt","r").read().splitlines()
+    # open the save file
+    file = open("passwords.txt", "r").read().splitlines()
 
     f = lock
     for cred in file[2:]:
