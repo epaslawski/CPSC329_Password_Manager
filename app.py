@@ -86,6 +86,12 @@ def confirm_add_callback(row):
     add_password(len(cred_buf), row)
     open_main()
 
+def confirm_delete_callback(index):
+    global cred_buf
+    delete_password(index)
+    open_main()
+
+
 def confirm_mpw_callback(sender, data):
     # compare inputs
     print("Checking password")
@@ -186,6 +192,15 @@ def add_password(index, row):
     cred_buffer_to_file(cred_buf)
     open_main()
 
+# calls the functions. add_password function to actually put the encrypted password into a text file
+def delete_password(index):
+    # code for adding the new password to the database, including encryption
+    global cred_buf
+    cred_buf.pop(index)
+    print("resaving file")
+    cred_buffer_to_file(cred_buf)
+    open_main()
+
 
 with window("Edit Password", width=width_setting, height=height_setting, no_collapse=True, no_resize=True, no_close=True,
             no_move=True, no_background=False):
@@ -204,6 +219,8 @@ with window("Edit Password", width=width_setting, height=height_setting, no_coll
     add_spacing(count=30)
 
     add_button("Cancel##e", callback=lambda x,y : open_main())
+    add_same_line()
+    add_button("Delete##e", callback=lambda sender, data: confirm_delete_callback(edit_properties[0]))
 
 with window("Add Password", width=width_setting, height=height_setting, no_collapse=True, no_resize=True, no_close=True,
             no_move=True, no_background=False):
@@ -238,9 +255,7 @@ with window("Main Page", width=width_setting, height=height_setting, y_pos=0, x_
     global tbl
     tbl = SmartTable(name="table")
     tbl.add_header(["Login ID:", "Passphrase:", "Website:", "Edit"])
-    tbl.add_row(["stormayy", 25, "Cabbage"])
-    tbl.add_row(["yantoseth", 19, "Pizza"])
-    tbl.add_row(["johnpaul444", 19, "Popcorn"])
+    
     # Add the logo
     draw_image("logo", "Logo.png", [0, 40], [420, 260])
 
